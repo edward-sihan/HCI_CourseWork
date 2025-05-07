@@ -13,6 +13,14 @@ export interface Room {
   updatedAt?: Date;
 }
 
+export interface RoomDetails {
+  width: number;
+  length: number;
+  height: number;
+  wallColor: string;
+  floorColor: string;
+}
+
 export interface Furniture {
   id?: string;
   name: string;
@@ -47,6 +55,7 @@ export interface Design {
   roomId: string;
   userId: string;
   furniture: FurniturePosition[];
+  roomDetails?: RoomDetails;
   createdAt?: Date;
   updatedAt?: Date;
 }

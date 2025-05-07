@@ -11,14 +11,32 @@ import { ModelManager } from "@/components/ModelManager";
 import { mockFurniture } from "@/data/mockData";
 import { ViewModeSelector } from "@/components/ViewModeSelector";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+
+const defaultRoomValues = {
+  name: 'New Room',
+  width: 5,
+  length: 5,
+  height: 3,
+  wallColor: '#FFFFFF',
+  floorColor: '#D2B48C',
+  userId: 'user1',
+};
 
 const Index = () => {
-  const { viewMode, setFurnitureCatalog } = useDesign();
+  const { viewMode, setFurnitureCatalog, currentDesign, setCurrentDesign, setCurrentRoom, setPlacedFurniture } = useDesign();
   
   // Load mock data on component mount
   useEffect(() => {
     setFurnitureCatalog(mockFurniture);
   }, [setFurnitureCatalog]);
+
+  // Reset everything for a new design
+  const handleNewDesign = () => {
+    setCurrentDesign(null);
+    setCurrentRoom({ ...defaultRoomValues });
+    setPlacedFurniture([]);
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -26,7 +44,20 @@ const Index = () => {
       
       <main className="flex-1 container max-w-[1600px] py-4">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl font-bold">Room Visualizer</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl font-bold">
+              {currentDesign ? `Editing: ${currentDesign.name}` : "New Design"}
+            </h1>
+            {currentDesign && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleNewDesign}
+              >
+                Create New
+              </Button>
+            )}
+          </div>
           <ViewModeSelector />
         </div>
         

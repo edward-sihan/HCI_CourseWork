@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Design, Furniture, FurniturePosition, Room } from '../types';
+import { Design, Furniture, FurniturePosition, Room, RoomDetails } from '../types';
 
 interface DesignContextType {
   currentRoom: Room | null;
@@ -16,6 +16,7 @@ interface DesignContextType {
   savedDesigns: Design[];
   setSavedDesigns: (designs: Design[]) => void;
   saveCurrentDesign: (name: string) => void;
+  deleteDesign: (designId: string) => void;
   viewMode: 'twoD' | 'threeD';
   setViewMode: (mode: 'twoD' | 'threeD') => void;
 }
@@ -84,17 +85,47 @@ export const DesignProvider = ({ children }: { children: ReactNode }) => {
   const saveCurrentDesign = (name: string) => {
     if (!currentRoom) return;
     
+    // Create a unique ID for the design if it doesn't exist
+    const id = currentDesign?.id || `design-${Date.now()}`;
+    
     const newDesign: Design = {
+      id,
       name,
       roomId: currentRoom.id || 'temp-room-id',
       userId: currentRoom.userId,
       furniture: [...placedFurniture],
-      createdAt: new Date(),
+      roomDetails: {
+        width: currentRoom.width,
+        length: currentRoom.length,
+        height: currentRoom.height,
+        wallColor: currentRoom.wallColor,
+        floorColor: currentRoom.floorColor,
+      },
+      createdAt: currentDesign?.createdAt || new Date(),
       updatedAt: new Date(),
     };
     
-    setSavedDesigns([...savedDesigns, newDesign]);
+    // Update the design if it exists, otherwise add a new one
+    if (currentDesign?.id) {
+      // Update existing design
+      setSavedDesigns(savedDesigns.map(design => 
+        design.id === currentDesign.id ? newDesign : design
+      ));
+    } else {
+      // Add new design
+      setSavedDesigns([...savedDesigns, newDesign]);
+    }
+    
     setCurrentDesign(newDesign);
+  };
+
+  const deleteDesign = (designId: string) => {
+    setSavedDesigns(savedDesigns.filter(design => design.id !== designId));
+    
+    // If the current design is the one being deleted, clear it
+    if (currentDesign?.id === designId) {
+      setCurrentDesign(null);
+    }
   };
 
   return (
@@ -114,6 +145,7 @@ export const DesignProvider = ({ children }: { children: ReactNode }) => {
         savedDesigns,
         setSavedDesigns,
         saveCurrentDesign,
+        deleteDesign,
         viewMode,
         setViewMode,
       }}

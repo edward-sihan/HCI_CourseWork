@@ -47,6 +47,7 @@ interface FurnitureProps {
 interface SelectableFurnitureProps extends FurnitureProps {
   isSelected: boolean;
   onClick: () => void;
+  readOnly?: boolean;
 }
 
 // New component for OBJ model furniture
@@ -54,7 +55,8 @@ const ObjFurniture = ({
   furniture, 
   position, 
   isSelected, 
-  onClick 
+  onClick,
+  readOnly = false
 }: SelectableFurnitureProps) => {
   const [model, setModel] = useState<THREE.Group | null>(null);
   
@@ -100,8 +102,10 @@ const ObjFurniture = ({
       <mesh 
         position={[position.x, position.y + furniture.height * position.scale / 2, position.z]}
         onClick={(e) => {
-          e.stopPropagation();
-          onClick();
+          if (!readOnly) {
+            e.stopPropagation();
+            onClick();
+          }
         }}
       >
         <boxGeometry args={[0.5, 0.5, 0.5]} />
@@ -118,12 +122,14 @@ const ObjFurniture = ({
       rotation={[0, position.rotation * Math.PI / 180, 0]}
       scale={[position.scale, position.scale, position.scale]}
       onClick={(e) => {
-        e.stopPropagation();
-        onClick();
+        if (!readOnly) {
+          e.stopPropagation();
+          onClick();
+        }
       }}
     >
       <primitive object={model.clone()} />
-      {isSelected && (
+      {isSelected && !readOnly && (
         <mesh>
           <boxGeometry args={[
             furniture.width + 0.05, 
@@ -142,7 +148,7 @@ const ObjFurniture = ({
   );
 };
 
-export const Canvas3D: React.FC = () => {
+export const Canvas3D: React.FC<{ readOnly?: boolean }> = ({ readOnly = false }) => {
   const { currentRoom, placedFurniture, furnitureCatalog, updateFurniturePosition } = useDesign();
   const [selectedFurnitureIndex, setSelectedFurnitureIndex] = useState<number | null>(null);
   
@@ -158,7 +164,7 @@ export const Canvas3D: React.FC = () => {
   };
 
   const rotateLeft = () => {
-    if (selectedFurnitureIndex === null) return;
+    if (selectedFurnitureIndex === null || readOnly) return;
     
     const furniture = placedFurniture[selectedFurnitureIndex];
     updateFurniturePosition(selectedFurnitureIndex, { 
@@ -167,7 +173,7 @@ export const Canvas3D: React.FC = () => {
   };
   
   const rotateRight = () => {
-    if (selectedFurnitureIndex === null) return;
+    if (selectedFurnitureIndex === null || readOnly) return;
     
     const furniture = placedFurniture[selectedFurnitureIndex];
     updateFurniturePosition(selectedFurnitureIndex, { 
@@ -235,9 +241,14 @@ export const Canvas3D: React.FC = () => {
                   furniture={furniture}
                   position={item}
                   isSelected={index === selectedFurnitureIndex}
-                  onClick={() => setSelectedFurnitureIndex(
-                    index === selectedFurnitureIndex ? null : index
-                  )}
+                  onClick={() => {
+                    if (!readOnly) {
+                      setSelectedFurnitureIndex(
+                        index === selectedFurnitureIndex ? null : index
+                      );
+                    }
+                  }}
+                  readOnly={readOnly}
                 />
               );
             }
@@ -249,9 +260,14 @@ export const Canvas3D: React.FC = () => {
                 furniture={furniture}
                 position={item}
                 isSelected={index === selectedFurnitureIndex}
-                onClick={() => setSelectedFurnitureIndex(
-                  index === selectedFurnitureIndex ? null : index
-                )}
+                onClick={() => {
+                  if (!readOnly) {
+                    setSelectedFurnitureIndex(
+                      index === selectedFurnitureIndex ? null : index
+                    );
+                  }
+                }}
+                readOnly={readOnly}
               />
             );
           })}
@@ -274,7 +290,7 @@ export const Canvas3D: React.FC = () => {
           
           <OrbitControls 
             enableZoom={true} 
-            enablePan={true} 
+            enablePan={!readOnly}
             enableRotate={true}
             minDistance={2}
             maxDistance={10}
@@ -294,8 +310,8 @@ export const Canvas3D: React.FC = () => {
         <p className="text-xs">Items: {placedFurniture.length}</p>
       </div>
       
-      {/* Furniture control overlay */}
-      {selectedFurnitureIndex !== null && (
+      {/* Furniture control overlay - only show in editable mode */}
+      {!readOnly && selectedFurnitureIndex !== null && (
         <div className="absolute top-4 right-4 p-4 bg-background/80 backdrop-blur-sm rounded-md shadow-md">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-medium">
@@ -338,21 +354,23 @@ export const Canvas3D: React.FC = () => {
         </div>
       )}
       
-      {/* Lighting control button */}
-      <div className="absolute top-4 left-4">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={() => setShowLightingControls(!showLightingControls)}
-          className="bg-background/80 backdrop-blur-sm"
-        >
-          <Settings className="h-4 w-4 mr-1" />
-          Lighting
-        </Button>
-      </div>
+      {/* Lighting control button - only show in editable mode */}
+      {!readOnly && (
+        <div className="absolute top-4 left-4">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setShowLightingControls(!showLightingControls)}
+            className="bg-background/80 backdrop-blur-sm"
+          >
+            <Settings className="h-4 w-4 mr-1" />
+            Lighting
+          </Button>
+        </div>
+      )}
       
-      {/* Lighting controls */}
-      {showLightingControls && (
+      {/* Lighting controls - only show in editable mode */}
+      {!readOnly && showLightingControls && (
         <div className="absolute top-16 left-4 p-4 bg-background/80 backdrop-blur-sm rounded-md shadow-md w-64">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-medium">Lighting Settings</h3>
@@ -486,7 +504,8 @@ const SelectableFurniture = ({
   furniture, 
   position, 
   isSelected, 
-  onClick 
+  onClick,
+  readOnly = false
 }: SelectableFurnitureProps) => {
   // Use MeshStandardMaterial for better lighting
   const material = new THREE.MeshStandardMaterial({ 
@@ -503,15 +522,17 @@ const SelectableFurniture = ({
       rotation={[0, position.rotation * Math.PI / 180, 0]}
       scale={position.scale}
       onClick={(e) => {
-        e.stopPropagation();
-        onClick();
+        if (!readOnly) {
+          e.stopPropagation();
+          onClick();
+        }
       }}
     >
       <mesh castShadow receiveShadow>
         <boxGeometry args={[furniture.width, furniture.height, furniture.length]} />
         <primitive object={material} />
       </mesh>
-      {isSelected && (
+      {isSelected && !readOnly && (
         <mesh>
           <boxGeometry args={[
             furniture.width + 0.05, 
