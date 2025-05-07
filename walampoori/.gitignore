@@ -18,9 +18,9 @@ dist-ssr/
 build/
 .out/
 
-# Environment variables
-.env
-.env.*  # (optional) excludes .env.local, .env.development, etc.
+# # Environment variables
+# .env
+# .env.*  # (optional) excludes .env.local, .env.development, etc.
 
 # Editor directories and files
 .vscode/*

@@ -1,21 +1,9 @@
 # Node & Common
 node_modules/
 dist/
-.env
-.env.*    # Covers .env.local, .env.development, etc.
+# .env
+# .env.*    # Covers .env.local, .env.development, etc.
 *.log
-
-# Admin (React + Vite)
-admin/node_modules/
-admin/dist/
-admin/.env
-admin/.env.*
-
-# Frontend (React + Vite)
-frontend/node_modules/
-frontend/dist/
-frontend/.env
-frontend/.env.*
 
 # Backend
 backend/node_modules/
