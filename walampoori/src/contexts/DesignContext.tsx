@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Design, Furniture, FurniturePosition, Room } from '../types';
 
@@ -59,8 +58,21 @@ export const DesignProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateFurniturePosition = (index: number, position: Partial<FurniturePosition>) => {
+    if (!currentRoom) return;
+    
     const updatedFurniture = [...placedFurniture];
-    updatedFurniture[index] = { ...updatedFurniture[index], ...position };
+    const updatedItem = { ...updatedFurniture[index], ...position };
+    
+    // Allow furniture to be placed anywhere within room boundaries
+    if (position.x !== undefined) {
+      updatedItem.x = Math.max(0, Math.min(currentRoom.width, updatedItem.x));
+    }
+    
+    if (position.z !== undefined) {
+      updatedItem.z = Math.max(0, Math.min(currentRoom.length, updatedItem.z));
+    }
+    
+    updatedFurniture[index] = updatedItem;
     setPlacedFurniture(updatedFurniture);
   };
 

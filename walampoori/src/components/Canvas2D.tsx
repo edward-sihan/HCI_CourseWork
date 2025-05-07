@@ -190,11 +190,17 @@ export const Canvas2D = () => {
           bottom: roomTop + (roomLength * scale)
         };
         
-        // Keep furniture within room bounds
-        if (obj.left! < roomBounds.left) obj.set('left', roomBounds.left);
-        if (obj.top! < roomBounds.top) obj.set('top', roomBounds.top);
-        if (obj.left! + obj.width! > roomBounds.right) obj.set('left', roomBounds.right - obj.width!);
-        if (obj.top! + obj.height! > roomBounds.bottom) obj.set('top', roomBounds.bottom - obj.height!);
+        // IMPROVED: Allow furniture to move to the edges
+        // Let objects be positioned at the edges of the room
+        // This fixes the issue with furniture not moving to corners
+        if (obj.left! < roomBounds.left) 
+          obj.set('left', roomBounds.left);
+        if (obj.top! < roomBounds.top) 
+          obj.set('top', roomBounds.top);
+        if (obj.left! > roomBounds.right) 
+          obj.set('left', roomBounds.right);
+        if (obj.top! > roomBounds.bottom) 
+          obj.set('top', roomBounds.bottom);
       });
       
       rect.on('modified', function(this: FabricObject) {

@@ -97,16 +97,13 @@ export const FurnitureModel: React.FC<FurnitureModelProps> = ({
       const furnitureDetails = furnitureCatalog.find(f => f.id === furnitureItem.furnitureId);
       
       if (furnitureDetails) {
-        // Constrain to room boundaries
+        // Allow furniture to be placed anywhere within the room bounds
         const roomWidth = currentRoom.width;
         const roomLength = currentRoom.length;
         
-        const halfWidth = furnitureDetails.width * position.scale / 2;
-        const halfLength = furnitureDetails.length * position.scale / 2;
-        
         // Clamp position within room boundaries
-        newPosition.x = Math.max(halfWidth, Math.min(roomWidth - halfWidth, newPosition.x));
-        newPosition.z = Math.max(halfLength, Math.min(roomLength - halfLength, newPosition.z));
+        newPosition.x = Math.max(0, Math.min(roomWidth, newPosition.x));
+        newPosition.z = Math.max(0, Math.min(roomLength, newPosition.z));
         
         // Update the position in the context
         updateFurniturePosition(index, {
