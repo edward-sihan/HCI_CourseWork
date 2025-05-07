@@ -1,4 +1,4 @@
-// src/pages/Index.tsx (modified to include ModelManager)
+// src/pages/Index.tsx
 import { Header } from "@/components/Header";
 import { useDesign } from "@/contexts/DesignContext";
 import { useEffect } from "react";
@@ -7,7 +7,7 @@ import { Canvas3D } from "@/components/Canvas3D";
 import { RoomControls } from "@/components/RoomControls";
 import { FurnitureCatalog } from "@/components/FurnitureCatalog";
 import { PlacedFurnitureList } from "@/components/PlacedFurnitureList";
-import { ModelManager } from "@/components/ModelManager"; // Import the new component
+import { ModelManager } from "@/components/ModelManager";
 import { mockFurniture } from "@/data/mockData";
 import { ViewModeSelector } from "@/components/ViewModeSelector";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -24,32 +24,32 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-1 container py-6">
-        <div className="flex justify-between items-center mb-6">
+      <main className="flex-1 container max-w-[1600px] py-4">
+        <div className="flex justify-between items-center mb-4">
           <h1 className="text-3xl font-bold">Room Visualizer</h1>
           <ViewModeSelector />
         </div>
         
-        <div className="grid grid-cols-12 gap-6">
-          {/* Left sidebar */}
-          <div className="col-span-3">
+        <div className="grid grid-cols-12 gap-4">
+          {/* Left sidebar - make it narrower */}
+          <div className="col-span-2">
             <RoomControls />
           </div>
           
-          {/* Main canvas area */}
-          <div className="col-span-6 flex flex-col">
-            <div className="bg-white border rounded-md shadow-sm h-[600px] flex items-center justify-center">
+          {/* Main canvas area - make it wider */}
+          <div className="col-span-8 flex flex-col">
+            <div className="bg-white border rounded-md shadow-sm h-[700px] flex items-center justify-center">
               {viewMode === 'twoD' ? <Canvas2D /> : <Canvas3D />}
             </div>
           </div>
           
-          {/* Right sidebar */}
-          <div className="col-span-3">
+          {/* Right sidebar - make it narrower */}
+          <div className="col-span-2">
             <Tabs defaultValue="catalog">
               <TabsList className="w-full">
                 <TabsTrigger value="catalog">Furniture</TabsTrigger>
-                <TabsTrigger value="placed">Placed Items</TabsTrigger>
-                <TabsTrigger value="models">3D Models</TabsTrigger>
+                <TabsTrigger value="placed">Items</TabsTrigger>
+                <TabsTrigger value="models">Models</TabsTrigger>
               </TabsList>
               
               <TabsContent value="catalog">

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useDesign } from "@/contexts/DesignContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 
 export const ModelManager = () => {
@@ -76,61 +77,62 @@ export const ModelManager = () => {
   }, []);
   
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>3D Model Manager</CardTitle>
-        <CardDescription>
-          Upload custom 3D models for your furniture items
+    <Card className="h-full">
+      <CardHeader className="p-3 pb-0">
+        <CardTitle className="text-base">3D Models</CardTitle>
+        <CardDescription className="text-xs">
+          Upload custom 3D models
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {furnitureCatalog.map((furniture) => {
-            // Check if this furniture has a stored model
-            const storedModels = JSON.parse(localStorage.getItem('walampoori-models') || '{}');
-            const hasModel = !!storedModels[furniture.id];
-            
-            return (
-              <div key={furniture.id} className="flex items-center justify-between p-3 border rounded-md">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-muted rounded overflow-hidden">
-                    <img 
-                      src={furniture.thumbnailUrl} 
-                      alt={furniture.name} 
-                      className="w-full h-full object-cover" 
-                    />
+      <CardContent className="p-2">
+        <ScrollArea className="h-[650px] pr-2">
+          <div className="space-y-2">
+            {furnitureCatalog.map((furniture) => {
+              // Check if this furniture has a stored model
+              const storedModels = JSON.parse(localStorage.getItem('walampoori-models') || '{}');
+              const hasModel = !!storedModels[furniture.id];
+              
+              return (
+                <div key={furniture.id} className="flex items-center justify-between p-2 border rounded-md">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 bg-muted rounded overflow-hidden">
+                      <img 
+                        src={furniture.thumbnailUrl} 
+                        alt={furniture.name} 
+                        className="w-full h-full object-cover" 
+                      />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium">{furniture.name}</p>
+                      {hasModel && (
+                        <p className="text-xs text-green-600">
+                          Model loaded
+                        </p>
+                      )}
+                    </div>
                   </div>
+                  
                   <div>
-                    <p className="font-medium text-sm">{furniture.name}</p>
-                    <p className="text-xs text-muted-foreground">{furniture.type}</p>
-                    {hasModel && (
-                      <p className="text-xs text-green-600">
-                        Model: {storedModels[furniture.id].name}
-                      </p>
-                    )}
+                    <input
+                      id={`model-upload-${furniture.id}`}
+                      type="file"
+                      accept=".obj,.mtl,.gltf,.glb"
+                      className="hidden"
+                      onChange={(e) => handleModelUpload(e, furniture.id || '')}
+                      disabled={isUploading}
+                    />
+                    <label 
+                      htmlFor={`model-upload-${furniture.id}`}
+                      className="cursor-pointer px-2 py-1 bg-primary text-primary-foreground text-xs rounded hover:bg-primary/90 disabled:opacity-50"
+                    >
+                      {hasModel ? 'Change' : 'Upload'}
+                    </label>
                   </div>
                 </div>
-                
-                <div>
-                  <input
-                    id={`model-upload-${furniture.id}`}
-                    type="file"
-                    accept=".obj,.mtl,.gltf,.glb"
-                    className="hidden"
-                    onChange={(e) => handleModelUpload(e, furniture.id || '')}
-                    disabled={isUploading}
-                  />
-                  <label 
-                    htmlFor={`model-upload-${furniture.id}`}
-                    className="cursor-pointer px-3 py-1.5 bg-primary text-primary-foreground text-xs rounded hover:bg-primary/90 disabled:opacity-50"
-                  >
-                    {hasModel ? 'Change Model' : 'Upload Model'}
-                  </label>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        </ScrollArea>
       </CardContent>
     </Card>
   );
