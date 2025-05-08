@@ -55,7 +55,7 @@ const Designs = () => {
   const handleViewDesign = (design: Design) => {
     setCurrentDesign(design);
     setPlacedFurniture(design.furniture);
-    navigate("/view-design/" + design.id);
+    navigate(`/view-design/${design.id}`);
   };
 
   // Delete design confirmation

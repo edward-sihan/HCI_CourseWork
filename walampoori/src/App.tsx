@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Designs from "./pages/Designs";
 import Rooms from "./pages/Rooms";
 import NotFound from "./pages/NotFound";
+import ViewDesign from "./pages/ViewDesign";
 import { DesignProvider } from "./contexts/DesignContext";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -70,6 +71,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Rooms />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/view-design/:id"
+              element={
+                <ProtectedRoute>
+                  <ViewDesign />
                 </ProtectedRoute>
               }
             />
