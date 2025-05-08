@@ -1,4 +1,4 @@
-
+// src/data/mockData.ts
 import { Furniture, Room, Design } from '../types';
 
 export const mockFurniture: Furniture[] = [
@@ -13,6 +13,8 @@ export const mockFurniture: Furniture[] = [
     defaultColor: '#A67D5D',
     modelUrl: '/models/chair.glb',
     thumbnailUrl: 'https://placehold.co/100x100?text=Chair',
+    modelFormat: 'glb',
+    glbModelPath: '/models/chair.glb',
     createdAt: new Date(),
   },
   {
@@ -26,6 +28,8 @@ export const mockFurniture: Furniture[] = [
     defaultColor: '#8B5A2B',
     modelUrl: '/models/table.glb',
     thumbnailUrl: 'https://placehold.co/100x100?text=Table',
+    modelFormat: 'glb',
+    glbModelPath: '/models/table.glb',
     createdAt: new Date(),
   },
   {
@@ -39,6 +43,8 @@ export const mockFurniture: Furniture[] = [
     defaultColor: '#6B8E23',
     modelUrl: '/models/sofa.glb',
     thumbnailUrl: 'https://placehold.co/100x100?text=Sofa',
+    modelFormat: 'glb',
+    glbModelPath: '/models/sofa.glb',
     createdAt: new Date(),
   },
   {
@@ -52,6 +58,8 @@ export const mockFurniture: Furniture[] = [
     defaultColor: '#4682B4',
     modelUrl: '/models/bed.glb',
     thumbnailUrl: 'https://placehold.co/100x100?text=Bed',
+    modelFormat: 'glb',
+    glbModelPath: '/models/bed.glb',
     createdAt: new Date(),
   },
   {
@@ -65,10 +73,13 @@ export const mockFurniture: Furniture[] = [
     defaultColor: '#B8860B',
     modelUrl: '/models/cabinet.glb',
     thumbnailUrl: 'https://placehold.co/100x100?text=Cabinet',
+    modelFormat: 'glb',
+    glbModelPath: '/models/cabinet.glb',
     createdAt: new Date(),
   },
 ];
 
+// The rest of the file remains unchanged
 export const mockRooms: Room[] = [
   {
     id: 'room1',

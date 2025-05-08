@@ -1,5 +1,5 @@
 // src/components/ModelManager.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDesign } from "@/contexts/DesignContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -21,6 +21,10 @@ export const ModelManager = () => {
       // Create a URL for the uploaded file
       const objectUrl = URL.createObjectURL(file);
       
+      // Determine the file type
+      const isGlb = file.name.toLowerCase().endsWith('.glb');
+      const isObj = file.name.toLowerCase().endsWith('.obj');
+      
       // Store the uploaded model path in local storage for persistence
       const storedModels = JSON.parse(localStorage.getItem('walampoori-models') || '{}');
       storedModels[furnitureId] = {
@@ -28,6 +32,7 @@ export const ModelManager = () => {
         name: file.name,
         size: file.size,
         type: file.type,
+        format: isGlb ? 'glb' : isObj ? 'obj' : 'other',
         lastModified: file.lastModified
       };
       localStorage.setItem('walampoori-models', JSON.stringify(storedModels));
@@ -35,9 +40,12 @@ export const ModelManager = () => {
       // Update the furniture catalog with the new model path
       const updatedCatalog = furnitureCatalog.map(item => {
         if (item.id === furnitureId) {
+          const modelFormat = isGlb ? 'glb' as const : isObj ? 'obj' as const : 'box' as const;
           return {
             ...item,
-            objModelPath: objectUrl
+            modelFormat: modelFormat as "glb" | "obj" | "box",
+            objModelPath: isObj ? objectUrl : item.objModelPath,
+            glbModelPath: isGlb ? objectUrl : item.glbModelPath
           };
         }
         return item;
@@ -54,16 +62,22 @@ export const ModelManager = () => {
   };
   
   // Load previously uploaded models on component mount
-  React.useEffect(() => {
+  useEffect(() => {
     try {
       const storedModels = JSON.parse(localStorage.getItem('walampoori-models') || '{}');
       
       if (Object.keys(storedModels).length > 0) {
         const updatedCatalog = furnitureCatalog.map(item => {
           if (storedModels[item.id]) {
+            const modelData = storedModels[item.id];
+            const isGlb = modelData.name?.toLowerCase().endsWith('.glb');
+            const isObj = modelData.name?.toLowerCase().endsWith('.obj');
+            
             return {
               ...item,
-              objModelPath: storedModels[item.id].path
+              modelFormat: (isGlb ? 'glb' : isObj ? 'obj' : 'box') as "glb" | "obj" | "box",
+              objModelPath: isObj ? modelData.path : item.objModelPath,
+              glbModelPath: isGlb ? modelData.path : item.glbModelPath
             };
           }
           return item;
@@ -91,6 +105,10 @@ export const ModelManager = () => {
               // Check if this furniture has a stored model
               const storedModels = JSON.parse(localStorage.getItem('walampoori-models') || '{}');
               const hasModel = !!storedModels[furniture.id];
+              const modelType = hasModel ? 
+                (storedModels[furniture.id].name?.toLowerCase().endsWith('.glb') ? 'GLB' : 
+                 storedModels[furniture.id].name?.toLowerCase().endsWith('.obj') ? 'OBJ' : 
+                 'Unknown') : '';
               
               return (
                 <div key={furniture.id} className="flex items-center justify-between p-2 border rounded-md">
@@ -106,7 +124,7 @@ export const ModelManager = () => {
                       <p className="text-xs font-medium">{furniture.name}</p>
                       {hasModel && (
                         <p className="text-xs text-green-600">
-                          Model loaded
+                          {modelType} model loaded
                         </p>
                       )}
                     </div>

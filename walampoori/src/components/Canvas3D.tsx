@@ -15,6 +15,7 @@ import { Settings } from "lucide-react";
 
 // Import directly from Three.js
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
+import { GlbFurnitureModel } from "./GlbFurnitureModel";
 
 interface RoomProps {
   room: {
@@ -233,8 +234,32 @@ export const Canvas3D: React.FC<{ readOnly?: boolean }> = ({ readOnly = false })
             const furniture = getFurnitureById(item.furnitureId);
             if (!furniture) return null;
             
+            // If furniture has a GLB model path, use GlbFurnitureModel component
+            if (furniture.glbModelPath) {
+              return (
+                <GlbFurnitureModel
+                  key={`furniture-${index}`}
+                  modelPath={furniture.glbModelPath}
+                  position={{
+                    ...item,
+                    y: 0 // Ensure models are placed at floor level
+                  }}
+                  furniture={furniture}
+                  isSelected={index === selectedFurnitureIndex}
+                  onClick={() => {
+                    if (!readOnly) {
+                      setSelectedFurnitureIndex(
+                        index === selectedFurnitureIndex ? null : index
+                      );
+                    }
+                  }}
+                  readOnly={readOnly}
+                />
+              );
+            }
+            
             // If furniture has an OBJ model path, use ObjFurniture component
-            if (furniture.objModelPath) {
+            else if (furniture.objModelPath) {
               return (
                 <ObjFurniture
                   key={`furniture-${index}`}

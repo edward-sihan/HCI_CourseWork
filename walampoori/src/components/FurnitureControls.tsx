@@ -99,7 +99,7 @@ export const FurnitureControls = ({
             <ZoomOut className="h-3 w-3 text-muted-foreground" />
             <Slider
               value={[furniture.scale]}
-              min={0.5}
+              min={0.1}
               max={2}
               step={0.1}
               onValueChange={handleScaleChange}

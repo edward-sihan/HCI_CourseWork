@@ -32,7 +32,9 @@ export interface Furniture {
   defaultColor: string; // hex code
   modelUrl: string; // URL to 3D model
   thumbnailUrl: string; // URL to thumbnail image
-  objModelPath?: string; // Path to OBJ model file (new property)
+  modelFormat?: 'glb' | 'obj' | 'box'; // Add this to specify model format
+  objModelPath?: string; // Path to OBJ model file
+  glbModelPath?: string; // Path to GLB model file (add this)
   createdAt?: Date;
 }
 
